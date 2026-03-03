@@ -17,8 +17,7 @@ The project focuses on implementing the full chess rules engine and a clean UI f
 
 ## Project Structure
 
-```
-## Project Structure
+
 
 ```
 chess-game
@@ -41,7 +40,7 @@ chess-game
     └── MainLogic.js   # connects UI with engine
 ```
 
-```
+
 
 ## How to Run
 
