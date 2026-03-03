@@ -1,0 +1,71 @@
+body {
+  font-family: Arial, sans-serif;
+  background: linear-gradient(135deg, #2B3038, #0F172A);
+  color: #fff;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  margin: 0;
+}
+
+#lobby {
+  text-align: center;
+  background: rgba(0,0,0,0.6);
+  padding: 40px 60px;
+  border-radius: 16px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+}
+
+#lobby h1 {
+  margin-bottom: 30px;
+  font-size: 2em;
+}
+
+.mode-selection button {
+  background-color: #fff;
+  color: midnightblue;
+  border: none;
+  padding: 15px 30px;
+  margin: 10px;
+  border-radius: 10px;
+  font-size: 1em;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.mode-selection button:hover {
+  transform: scale(1.1);
+  background-color: #f0f0f0;
+}
+
+
+
+.square {
+  width: 60px;
+  height: 60px;
+  position: relative;
+}
+
+.square.light { background-color: #f0d9b5; }
+.square.dark  { background-color: #b58863; }
+
+.square.highlight::after {
+  content: "";
+  width: 18px;
+  height: 18px;
+  background: rgba(0, 0, 0, 0.35);
+  border-radius: 50%;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+#chessBoard.flipped {
+  transform: rotate(180deg);
+}
+
+#chessBoard.flipped .square{
+  transform: rotate(180deg);
+}

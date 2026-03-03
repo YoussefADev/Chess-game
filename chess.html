@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <title>play chess</title>
+</head>
+<body>
+    <div id="lobby">
+        <h1>Chess Lobby</h1>
+        <div class="mode-selection">
+            <button id="human-btn">play in person</button>
+            <button id="bot-btn">play bot</button>
+        </div>
+        </div>
+        <div id="game" style="display:none;">
+            <!-- will create chessboard after momment -->
+        <div id="chessBoard"></div>
+    </div>
+</body>
+
+<script src="src/logic/pieces.js"></script>
+<script src="src/logic/board.js"></script>
+<script src="src/logic/GameEngine.js"></script>
+<script src="src/ui/UIManager.js"></script>
+<script src="src/MainLogic.js"></script>
+</html>
