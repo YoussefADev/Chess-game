@@ -63,7 +63,7 @@ chessBoardElement.addEventListener("click", e => {
 })
 
 function aiMove() {
-    // Placeholder for bot logic
+    // Placeholder for bot logic, soon
     const moves = []
     for (let row = 0; row < 8; row++) {
         for (let col = 0; col < 8; col++) {

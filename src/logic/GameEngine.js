@@ -85,12 +85,11 @@ class GameEngine {
         return false
     }
 
-    movePiece(fromRow, fromCol, toRow, toCol) {
+    movePiece(fromRow, fromCol, toRow, toCol, isSimulation = false) {
         const piece = this.board.getPiece(fromRow, fromCol)
         if (!piece || piece.color !== this.turnToPlay) return false
 
-        const captured = this.board.getPiece(toRow, toCol)
-
+        let captured = this.board.getPiece(toRow, toCol)
         const move = {
             fromRow, fromCol, toRow, toCol,
             piece,
@@ -100,33 +99,21 @@ class GameEngine {
             prevEnPassant: this.enPassantTarget ? { ...this.enPassantTarget } : null,
             wasCastling: false,
             wasEnPassant: false,
+            promotion: null,
             rookMove: null
         }
 
-        if (
-            piece.type === "pawn" &&
-            this.enPassantTarget &&
-            toRow === this.enPassantTarget.targetRow &&
-            toCol === this.enPassantTarget.targetCol &&
-            piece.color !== this.enPassantTarget.color
-        ) {
-            const capturedPawn = this.board.getPiece(
-                this.enPassantTarget.pawnRow,
-                this.enPassantTarget.pawnCol
-            )
-
-            move.captured = capturedPawn
-            move.wasEnPassant = true
-
-            this.board.setPiece(
-                this.enPassantTarget.pawnRow,
-                this.enPassantTarget.pawnCol,
-                null
-            )
+        if (piece.type === "pawn" && this.enPassantTarget) {
+            const ep = this.enPassantTarget
+            if (toRow === ep.targetRow && toCol === ep.targetCol && piece.color !== ep.color) {
+                captured = this.board.getPiece(ep.pawnRow, ep.pawnCol)
+                move.captured = captured
+                move.wasEnPassant = true
+                this.board.setPiece(ep.pawnRow, ep.pawnCol, null)
+            }
         }
 
-        if (move.captured)
-            this.points[piece.color] += move.captured.points
+        if (captured) this.points[piece.color] += captured.points
 
         if (piece.type === "king" && Math.abs(toCol - fromCol) === 2) {
             move.wasCastling = true
@@ -146,7 +133,6 @@ class GameEngine {
 
         this.board.setPiece(toRow, toCol, piece)
         this.board.setPiece(fromRow, fromCol, null)
-
         if (piece.isMoved !== undefined) piece.isMoved = true
 
         if (piece.type === "king") {
@@ -159,22 +145,42 @@ class GameEngine {
             if (fromCol === 7) this.castlingRights[piece.color].short = false
         }
 
-        if (piece.type === "pawn" && Math.abs(toRow - fromRow) === 2) {
-            this.enPassantTarget = {
-                pawnRow: toRow,
-                pawnCol: toCol,
-                targetRow: (fromRow + toRow) / 2,
-                targetCol: toCol,
-                color: piece.color
+        if (piece.type === "pawn") {
+            if (Math.abs(toRow - fromRow) === 2) {
+                this.enPassantTarget = {
+                    pawnRow: toRow,
+                    pawnCol: toCol,
+                    targetRow: (fromRow + toRow) / 2,
+                    targetCol: toCol,
+                    color: piece.color
+                }
+            } else {
+                this.enPassantTarget = null
             }
-        } else {
-            this.enPassantTarget = null
+            
+            const lastRow = piece.color === "white" ? 0 : 7
+            if (toRow === lastRow && !isSimulation) {
+                this.board.setPiece(fromRow, fromCol, null)
+                this.promotePawn(toRow, toCol, piece.color)
+            }
         }
 
         this.moveHistory.push(move)
         this.redoStack = []
         this.turnToPlay = this.turnToPlay === "white" ? "black" : "white"
         return true
+    }
+
+    promotePawn(row, col, color) {
+        const choice = prompt("Choose promotion: Q, R, B, N").toUpperCase();
+        let newPiece;
+        switch(choice) {
+            case "R": newPiece = new Rook(color); break;
+            case "B": newPiece = new Bishop(color); break;
+            case "N": newPiece = new Knight(color); break;
+            default: newPiece = new Queen(color);
+        }
+        this.board.setPiece(row, col, newPiece);
     }
 
     undoMove() {
@@ -249,7 +255,7 @@ class GameEngine {
             const captured = this.board.getPiece(r, c)
             if (captured && captured.color === piece.color) continue
 
-            this.movePiece(row, col, r, c)
+            this.movePiece(row, col, r, c, true)
             const kingPos = this.kingPositions[piece.color]
             const inCheck = this.isSquareAttacked(
                 kingPos.row, kingPos.col,

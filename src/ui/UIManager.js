@@ -74,10 +74,14 @@ class UIManager {
         for (let row = 0; row < 8; row++) {
             for (let col = 0; col < 8; col++) {
                 this.getElementSquare(row, col).classList.remove("highlight")
+                this.getElementSquare(row, col).classList.remove("capture")
             }
         }
         for (let [r, c] of this.validMoves) {
-            this.getElementSquare(r, c).classList.add("highlight")
+            if(this.gameEngine.board.getPiece(r, c) == null)
+                this.getElementSquare(r, c).classList.add("highlight")
+            else
+                this.getElementSquare(r, c).classList.add("capture")
         }
     }
 
@@ -97,7 +101,10 @@ class UIManager {
         this.highlightValidMoves()
     }
 
+    
+
     flipBoard() {
         document.getElementById("chessBoard").classList.toggle("flipped")
     }
+    
 }
